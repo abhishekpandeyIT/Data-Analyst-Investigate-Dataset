@@ -20,7 +20,7 @@
 
 
 ```python
-'''Importing all the important packages'''
+'''Importing all the required packages'''
 
 import pandas as pd # For working with dataset
 import numpy as np # For working with numerical data
@@ -28,6 +28,18 @@ import matplotlib.pyplot as plt
 import seaborn as sns #For better visualisation
 %matplotlib inline
 
+"""Defining function for the program"""
+
+def show(dataframe, type):
+    if type == "data":
+        to_show=dataframe.head()
+    if type == 'info':
+        to_show=dataframe.info()
+    if type == 'desc':
+        to_show=dataframe.describe()
+    if type == 'size':
+        to_show=dataframe.shape
+    return to_show
 ```
 
 <a id='wrangling'></a>
@@ -42,7 +54,10 @@ import seaborn as sns #For better visualisation
 
 
 ```python
-df = pd.read_csv('F:\\Github_repo\\Data-Analyst-Investigate-Dataset\\Data_set.csv', encoding='latin-1')
+DATA_URL='F:\\Github_repo\\Data-Analyst-Investigate-Dataset\\Data_set.csv'
+encoding_type='latin-1'
+
+df = pd.read_csv(DATA_URL, encoding=encoding_type)
 df.head()
 ```
 
@@ -177,7 +192,7 @@ df.head()
 
 
 ```python
-df.describe()
+show(df,"desc")
 ```
 
 
@@ -317,7 +332,7 @@ df.describe()
 
 
 ```python
-df.info()
+show(df,"info")
 ```
 
     <class 'pandas.core.frame.DataFrame'>
@@ -487,7 +502,7 @@ age_max
 
 
 ```python
-age_max['PatientId'].nunique()
+age_max['PatientId'].nunique() # Here I'm using the nunique() function of pandas to know the no. of unique values in the desired dataframe.
 ```
 
 
@@ -505,7 +520,7 @@ df.Age.replace([-1],[0], inplace = True)
 
 
 ```python
-df.describe()
+show(df,"desc")
 ```
 
 
@@ -645,7 +660,7 @@ df.describe()
 
 
 ```python
-df.info()
+show(df,"info")
 ```
 
     <class 'pandas.core.frame.DataFrame'>
@@ -677,12 +692,14 @@ df.info()
 ### Research Question 1 (single variable exploration): 
 > **Does age (younger or older) have any kind of impact/ relationship in terms of people showing up for appointments or not?**
 >
-> In order to explore the above question I'm creating a copy of the 'df' dataframe to the 'df_new' name.
+> In order to explore the above question I'm creating a copy of the 'df' dataframe to a new dataframe named as 'df_new' so that I have a backup of the original dataframe.
 >
 > Now, using the 'df_new' dataframe, I'm creating a boxplot and using column "Age"  as the x-axis and "No-show" for the y-axis.
 
 
 ```python
+'''Here I am plotting a boxplot to analyse the relationship between "Age" and "Peoples present for appointments" '''
+
 df_new= df
 sns.boxplot(x="Age", y="No-show", palette=["g", "r"], data=df_new).set_title('Age Distribution Split by No-Show Category');
 ```
@@ -693,6 +710,8 @@ sns.boxplot(x="Age", y="No-show", palette=["g", "r"], data=df_new).set_title('Ag
 
 ### Research Question 2 (multi-variable exploration):
 >> **Does the combination of age and scholarship have any impact/ relationship with people showing up for appointments or not?**
+>
+> To Answer this question here I'm using `sns.catplot()` function of seaborn library to plot a bar grap between Scholarship-Age and peoples present for their appointments
 
 
 ```python
@@ -703,15 +722,44 @@ sns.catplot(x="Scholarship", y="Age", col="No-show", data=df_new, height=6, kind
 ![svg](output_16_0.svg)
 
 
+### Research Question 3:
+>> **Is there any relationship between the Diabetes disease and the peoples present for appointments?**
+>
+> This question help us to know that patients suffering from Diabetes disease are concious about there appointments or not? 
+> To Answer this question here I'm using `sns.catplot()` function of seaborn library to plot a bar grap between Diabetes-Age and peoples present for their appointments
+
+
+```python
+sns.set(style="ticks")
+sns.catplot(x="Diabetes", y="Age" , col="No-show", data=df_new);
+```
+
+
+![svg](output_18_0.svg)
+
+
 <a id='conclusions'></a>
 ## Conclusions
 
-
+> **Result**
+>
 > 1) Overall, there wasn't a huge difference in age for those who did or didn't show up to appointments. But I believe that the difference would have been higher for the group who did present for appointments rather that nearly 4 times larger than the group of people who aren't present for their appointments.
 > 
 > 2) While the age differences aren't very wide, the people who didn't show up to appointments tended to be younger and that is also the same for whether or not these 2 groups of people had healthcare scholarships. Also there is a fact that the **No-show=Yes** group is nearly 4 times smaller than the other group.
 > 
 > 3) Overall, after performing all the task I can conclude that there is not perfect evidence that either Age or Scholarship status have an strong relationship with people who were present for their appointment or not. Smaller number of people who were present for their appointments than who weren't might also can be a reason for this result.
+>
+> 4) Using the current dataset, I tried to make a relationship between age and No-show status of the patients. But It seems that there isn't any relationship between the Age and Disease and alsi it has no impact on appointments.
+
+> **Limitations:**
+>
+> 1) Given that Scholarship only has 0 or 1 for possible answers - it was tough to find good visuals that would also be able to work with Scholarship and still provide some insight and be easy to understand.
+>
+> 2) Lots of the columns used categorical data which makes it more difficult to analyze and visualize. This in turn somewhat hinders the ability to find any strong correlations between columns.
+>
+> 3) Again, the unbalance split between the No-show Yes and No-show No groups did't allow for a truly balanced or equal analysis to be done but at the same time this uneven split showed some potentially interesting areas that could be further explored.
+>
+> 4) The Data given in this dataset is completely scattered and it looks like there isn't any relation between data with one another.
 
 
 
